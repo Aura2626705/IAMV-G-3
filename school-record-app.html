@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ඉබ්බගමුව ආදර්ශ මහාවිද්‍යාලය - වාර්තාපොත</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@300;400;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a1628;
+    --navy-mid: #122040;
+    --navy-light: #1a3060;
+    --white: #f0f4ff;
+    --white-pure: #ffffff;
+    --accent: #4fc3f7;
+    --accent-bright: #81d4fa;
+    --gold: #ffd54f;
+    --gold-dim: #ffb300;
+    --card-bg: rgba(255,255,255,0.04);
+    --card-border: rgba(79,195,247,0.2);
+    --shadow: 0 8px 32px rgba(0,0,0,0.4);
+    --input-bg: rgba(255,255,255,0.06);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans Sinhala', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(26,48,96,0.6) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 90%, rgba(10,22,40,0.8) 0%, transparent 60%);
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    background: linear-gradient(135deg, var(--navy-mid), var(--navy-light));
+    border-bottom: 2px solid rgba(79,195,247,0.3);
+    padding: 16px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    position: sticky; top: 0; z-index: 100;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .school-emblem {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 0 20px rgba(255,213,79,0.4);
+    flex-shrink: 0;
+  }
+
+  .school-title h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white-pure);
+    line-height: 1.2;
+  }
+
+  .school-title p {
+    font-size: 11px;
+    color: var(--accent);
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .calc-toggle-btn {
+    background: linear-gradient(135deg, var(--accent), #0288d1);
+    color: var(--navy);
+    border: none;
+    padding: 10px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Noto Sans Sinhala', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex; align-items: center; gap: 6px;
+    transition: all 0.25s;
+    box-shadow: 0 4px 15px rgba(79,195,247,0.3);
+    white-space: nowrap;
+  }
+
+  .calc-toggle-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(79,195,247,0.5);
+  }
+
+  /* ===== MAIN LAYOUT ===== */
+  .main {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 24px 24px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* ===== TABS ===== */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--navy-mid);
+    border-radius: 14px;
+    padding: 6px;
+    border: 1px solid var(--card-border);
+  }
+
+  .tab-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    color: rgba(240,244,255,0.5);
+    padding: 10px 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Noto Sans Sinhala', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+    text-align: center;
+  }
+
+  .tab-btn.active {
+    background: linear-gradient(135deg, var(--accent), #0288d1);
+    color: var(--navy);
+  }
+
+  .tab-btn:hover:not(.active) {
+    background: rgba(79,195,247,0.1);
+    color: var(--white);
+  }
+
+  /* ===== CARD ===== */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(79,195,247,0.15);
+  }
+
+  .card-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), #0288d1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+
+  .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--white-pure);
+  }
+
+  /* ===== FORM ===== */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+  }
+
+  input, select, textarea {
+    background: var(--input-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: var(--white);
+    font-family: 'Noto Sans Sinhala', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+    width: 100%;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+    background: rgba(79,195,247,0.05);
+  }
+
+  select option { background: var(--navy-mid); color: var(--white); }
+
+  textarea { resize: vertical; min-height: 80px; }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #0288d1);
+    color: var(--navy);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Noto Sans Sinhala', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    width: 100%;
+    margin-top: 6px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 15px rgba(79,195,247,0.25);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(79,195,247,0.4);
+  }
+
+  /* ===== FILTERS ===== */
+  .filter-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  /* ===== TABLE ===== */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--card-border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  thead th {
+    background: rgba(79,195,247,0.12);
+    color: var(--accent);
+    padding: 12px 14px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-top: 1px solid rgba(79,195,247,0.08);
+    transition: background 0.15s;
+  }
+
+  tbody tr:hover { background: rgba(79,195,247,0.05); }
+
+  tbody td {
+    padding: 11px 14px;
+    color: var(--white);
+    vertical-align: middle;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    background: rgba(79,195,247,0.15);
+    color: var(--accent);
+    border: 1px solid rgba(79,195,247,0.3);
+  }
+
+  .btn-delete {
+    background: rgba(239,83,80,0.15);
+    color: #ef5350;
+    border: 1px solid rgba(239,83,80,0.3);
+    border-radius: 8px;
+    padding: 5px 12px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+    font-family: 'Noto Sans Sinhala', sans-serif;
+  }
+
+  .btn-delete:hover {
+    background: rgba(239,83,80,0.3);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: rgba(240,244,255,0.3);
+    font-size: 14px;
+  }
+
+  .empty-state .icon { font-size: 40px; margin-bottom: 10px; }
+
+  /* ===== CALCULATOR OVERLAY ===== */
+  .calc-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10,22,40,0.75);
+    backdrop-filter: blur(6px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .calc-overlay.open { display: flex; }
+
+  .calculator {
+    background: linear-gradient(145deg, #122040, #0a1628);
+    border: 1px solid rgba(79,195,247,0.35);
+    border-radius: 24px;
+    padding: 24px;
+    width: 340px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 40px rgba(79,195,247,0.1);
+    position: relative;
+  }
+
+  .calc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .calc-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 1px;
+  }
+
+  .close-btn {
+    background: rgba(239,83,80,0.2);
+    color: #ef5350;
+    border: 1px solid rgba(239,83,80,0.4);
+    border-radius: 8px;
+    width: 32px; height: 32px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .close-btn:hover { background: rgba(239,83,80,0.4); }
+
+  .calc-tabs {
+    display: flex;
+    gap: 4px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 14px;
+    border: 1px solid rgba(79,195,247,0.1);
+  }
+
+  .calc-tab {
+    flex: 1;
+    background: none;
+    border: none;
+    color: rgba(240,244,255,0.5);
+    padding: 7px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Noto Sans Sinhala', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .calc-tab.active {
+    background: linear-gradient(135deg, var(--accent), #0288d1);
+    color: var(--navy);
+  }
+
+  /* Display */
+  .calc-display {
+    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(79,195,247,0.2);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    text-align: right;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .calc-expr {
+    font-size: 12px;
+    color: rgba(240,244,255,0.4);
+    font-family: 'Orbitron', sans-serif;
+    min-height: 18px;
+    word-break: break-all;
+  }
+
+  .calc-result {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--white-pure);
+    font-family: 'Orbitron', sans-serif;
+    word-break: break-all;
+    margin-top: 4px;
+  }
+
+  /* Buttons */
+  .calc-btns {
+    display: grid;
+    gap: 8px;
+  }
+
+  .calc-btns.basic { grid-template-columns: repeat(4, 1fr); }
+  .calc-btns.scientific { grid-template-columns: repeat(4, 1fr); }
+
+  .cb {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(79,195,247,0.15);
+    border-radius: 10px;
+    color: var(--white);
+    padding: 13px 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Orbitron', sans-serif;
+    transition: all 0.15s;
+    text-align: center;
+    line-height: 1;
+  }
+
+  .cb:hover { background: rgba(79,195,247,0.12); border-color: var(--accent); }
+  .cb:active { transform: scale(0.94); }
+
+  .cb.op { color: var(--accent); background: rgba(79,195,247,0.07); }
+  .cb.eq { background: linear-gradient(135deg, var(--accent), #0288d1); color: var(--navy); font-size: 18px; }
+  .cb.eq:hover { box-shadow: 0 0 15px rgba(79,195,247,0.4); }
+  .cb.clear { color: #ef5350; background: rgba(239,83,80,0.1); }
+  .cb.fn { font-size: 11px; color: var(--gold); background: rgba(255,213,79,0.08); }
+
+  /* History panel */
+  .calc-history {
+    margin-top: 14px;
+    max-height: 130px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) transparent;
+  }
+
+  .calc-history::-webkit-scrollbar { width: 4px; }
+  .calc-history::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+
+  .history-label {
+    font-size: 11px;
+    color: rgba(240,244,255,0.4);
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    padding-left: 4px;
+  }
+
+  .history-item {
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    padding: 7px 12px;
+    margin-bottom: 5px;
+    font-size: 12px;
+    color: rgba(240,244,255,0.65);
+    font-family: 'Orbitron', sans-serif;
+    cursor: pointer;
+    transition: background 0.15s;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .history-item:hover { background: rgba(79,195,247,0.08); color: var(--white); }
+  .history-item .hist-res { color: var(--accent); font-weight: 700; }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 600px) {
+    .header { padding: 12px 16px; flex-wrap: wrap; gap: 10px; }
+    .school-title h1 { font-size: 15px; }
+    .main { padding: 16px 14px 40px; gap: 16px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .filter-row { grid-template-columns: 1fr; }
+    .calc-toggle-btn span.btn-text { display: none; }
+    .calculator { width: 96vw; padding: 18px; }
+    .calc-result { font-size: 22px; }
+    .tabs { flex-wrap: nowrap; overflow-x: auto; }
+    .tab-btn { font-size: 12px; white-space: nowrap; }
+  }
+
+  /* Notification */
+  .notif {
+    position: fixed;
+    bottom: 28px;
+    right: 24px;
+    background: linear-gradient(135deg, #1a3060, #122040);
+    border: 1px solid rgba(79,195,247,0.4);
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 600;
+    z-index: 2000;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s;
+    pointer-events: none;
+  }
+
+  .notif.show { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <div class="school-emblem">🏫</div>
+    <div class="school-title">
+      <h1>ඉබ්බගමුව ආදර්ශ මහාවිද්‍යාලය</h1>
+      <p>IBBAGAMUWA MODEL COLLEGE · RECORD SYSTEM</p>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="calc-toggle-btn" onclick="toggleCalc()">
+      🧮 <span class="btn-text">Calculator</span>
+    </button>
+  </div>
+</header>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('add')">➕ ඇතුළු කිරීම</button>
+    <button class="tab-btn" onclick="showTab('view')">📋 බලන්න</button>
+    <button class="tab-btn" onclick="showTab('stats')">📊 සාරාංශය</button>
+  </div>
+
+  <!-- ADD RECORD TAB -->
+  <div id="tab-add" class="tab-content active">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">📝</div>
+        <div class="card-title">නව වාර්තාවක් ඇතුළු කරන්න</div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>📅 දිනය</label>
+          <input type="date" id="rec-date">
+        </div>
+        <div class="form-group">
+          <label>🏫 පන්තිය</label>
+          <select id="rec-class">
+            <option value="">-- පන්තිය --</option>
+            <option>6A</option><option>6B</option><option>6C</option><option>6D</option><option>6E</option><option>6F</option>
+            <option>7A</option><option>7B</option><option>7C</option><option>7D</option><option>7E</option><option>7F</option>
+            <option>8A</option><option>8B</option><option>8C</option><option>8D</option><option>8E</option><option>8F</option>
+            <option>9A</option><option>9B</option><option>9C</option><option>9D</option><option>9E</option><option>9F</option>
+            <option>10A</option><option>10B</option><option>10C</option><option>10D</option><option>10E</option><option>10F</option>
+            <option>11A</option><option>11B</option><option>11C</option><option>11D</option><option>11E</option><option>11F</option>
+            <option>12A</option><option>12B</option><option>12C</option><option>12D</option><option>12E</option><option>12F</option>
+            <option>13A</option><option>13B</option><option>13C</option><option>13D</option><option>13E</option><option>13F</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>📚 විෂය</label>
+          <input type="text" id="rec-subject" placeholder="eg: ගණිතය">
+        </div>
+        <div class="form-group">
+          <label>👨‍🏫 ගුරුවරයා</label>
+          <input type="text" id="rec-teacher" placeholder="eg: නිලංකා මිය">
+        </div>
+        <div class="form-group full">
+          <label>📖 විස්තරය</label>
+          <textarea id="rec-desc" placeholder="පාඩම, ක්‍රියාකාරකම් හෝ වෙනත් සටහන..."></textarea>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="addRecord()">✅ වාර්තාව සුරකින්න</button>
+    </div>
+  </div>
+
+  <!-- VIEW RECORDS TAB -->
+  <div id="tab-view" class="tab-content">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🔍</div>
+        <div class="card-title">වාර්තා සෙවීම</div>
+      </div>
+      <div class="filter-row">
+        <div class="form-group">
+          <label>📅 දිනය අනුව</label>
+          <input type="date" id="filter-date" oninput="renderRecords()">
+        </div>
+        <div class="form-group">
+          <label>🏫 පන්තිය අනුව</label>
+          <select id="filter-class" onchange="renderRecords()">
+            <option value="">-- සියල්ල --</option>
+            <option>6A</option><option>6B</option><option>6C</option><option>6D</option><option>6E</option><option>6F</option>
+            <option>7A</option><option>7B</option><option>7C</option><option>7D</option><option>7E</option><option>7F</option>
+            <option>8A</option><option>8B</option><option>8C</option><option>8D</option><option>8E</option><option>8F</option>
+            <option>9A</option><option>9B</option><option>9C</option><option>9D</option><option>9E</option><option>9F</option>
+            <option>10A</option><option>10B</option><option>10C</option><option>10D</option><option>10E</option><option>10F</option>
+            <option>11A</option><option>11B</option><option>11C</option><option>11D</option><option>11E</option><option>11F</option>
+            <option>12A</option><option>12B</option><option>12C</option><option>12D</option><option>12E</option><option>12F</option>
+            <option>13A</option><option>13B</option><option>13C</option><option>13D</option><option>13E</option><option>13F</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>දිනය</th>
+              <th>පන්තිය</th>
+              <th>විෂය</th>
+              <th>ගුරුවරයා</th>
+              <th>විස්තරය</th>
+              <th>ක්‍රියා</th>
+            </tr>
+          </thead>
+          <tbody id="records-tbody">
+            <tr><td colspan="6"><div class="empty-state"><div class="icon">📭</div>වාර්තා නොමැත</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS TAB -->
+  <div id="tab-stats" class="tab-content">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">📊</div>
+        <div class="card-title">සාරාංශය</div>
+      </div>
+      <div id="stats-content" style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+        <div style="background:rgba(79,195,247,0.07);border:1px solid rgba(79,195,247,0.2);border-radius:14px;padding:18px;text-align:center;">
+          <div style="font-size:32px;font-weight:700;color:var(--accent);font-family:'Orbitron',sans-serif;" id="stat-total">0</div>
+          <div style="font-size:12px;color:rgba(240,244,255,0.6);margin-top:4px;">මුළු වාර්තා</div>
+        </div>
+        <div style="background:rgba(255,213,79,0.07);border:1px solid rgba(255,213,79,0.2);border-radius:14px;padding:18px;text-align:center;">
+          <div style="font-size:32px;font-weight:700;color:var(--gold);font-family:'Orbitron',sans-serif;" id="stat-classes">0</div>
+          <div style="font-size:12px;color:rgba(240,244,255,0.6);margin-top:4px;">පන්ති ගණන</div>
+        </div>
+      </div>
+      <div id="class-breakdown" style="margin-top:16px;"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- CALCULATOR OVERLAY -->
+<div class="calc-overlay" id="calc-overlay" onclick="closeCalcIfOutside(event)">
+  <div class="calculator" id="calc-box">
+    <div class="calc-header">
+      <span class="calc-title">🧮 Calculator</span>
+      <button class="close-btn" onclick="toggleCalc()">✕</button>
+    </div>
+
+    <div class="calc-tabs">
+      <button class="calc-tab active" onclick="switchCalcMode('basic')">මූලික</button>
+      <button class="calc-tab" onclick="switchCalcMode('sci')">විද්‍යාත්මක</button>
+    </div>
+
+    <div class="calc-display">
+      <div class="calc-expr" id="calc-expr"></div>
+      <div class="calc-result" id="calc-result">0</div>
+    </div>
+
+    <!-- BASIC -->
+    <div class="calc-btns basic" id="basic-btns">
+      <button class="cb clear" onclick="calcClear()">C</button>
+      <button class="cb op" onclick="calcDel()">⌫</button>
+      <button class="cb op" onclick="calcInput('%')">%</button>
+      <button class="cb op" onclick="calcInput('÷')">÷</button>
+
+      <button class="cb" onclick="calcInput('7')">7</button>
+      <button class="cb" onclick="calcInput('8')">8</button>
+      <button class="cb" onclick="calcInput('9')">9</button>
+      <button class="cb op" onclick="calcInput('×')">×</button>
+
+      <button class="cb" onclick="calcInput('4')">4</button>
+      <button class="cb" onclick="calcInput('5')">5</button>
+      <button class="cb" onclick="calcInput('6')">6</button>
+      <button class="cb op" onclick="calcInput('−')">−</button>
+
+      <button class="cb" onclick="calcInput('1')">1</button>
+      <button class="cb" onclick="calcInput('2')">2</button>
+      <button class="cb" onclick="calcInput('3')">3</button>
+      <button class="cb op" onclick="calcInput('+')">+</button>
+
+      <button class="cb" style="grid-column:span 2" onclick="calcInput('0')">0</button>
+      <button class="cb" onclick="calcInput('.')">.</button>
+      <button class="cb eq" onclick="calcEqual()">=</button>
+    </div>
+
+    <!-- SCIENTIFIC -->
+    <div class="calc-btns scientific" id="sci-btns" style="display:none;">
+      <button class="cb fn" onclick="calcFn('sqrt')">√x</button>
+      <button class="cb fn" onclick="calcFn('sq')">x²</button>
+      <button class="cb fn" onclick="calcFn('pow')">xʸ</button>
+      <button class="cb fn" onclick="calcFn('pi')">π</button>
+
+      <button class="cb fn" onclick="calcFn('sin')">sin</button>
+      <button class="cb fn" onclick="calcFn('cos')">cos</button>
+      <button class="cb fn" onclick="calcFn('tan')">tan</button>
+      <button class="cb fn" onclick="calcFn('log')">log</button>
+
+      <button class="cb clear" onclick="calcClear()">C</button>
+      <button class="cb op" onclick="calcDel()">⌫</button>
+      <button class="cb op" onclick="calcInput('(')">( )</button>
+      <button class="cb op" onclick="calcInput('÷')">÷</button>
+
+      <button class="cb" onclick="calcInput('7')">7</button>
+      <button class="cb" onclick="calcInput('8')">8</button>
+      <button class="cb" onclick="calcInput('9')">9</button>
+      <button class="cb op" onclick="calcInput('×')">×</button>
+
+      <button class="cb" onclick="calcInput('4')">4</button>
+      <button class="cb" onclick="calcInput('5')">5</button>
+      <button class="cb" onclick="calcInput('6')">6</button>
+      <button class="cb op" onclick="calcInput('−')">−</button>
+
+      <button class="cb" onclick="calcInput('1')">1</button>
+      <button class="cb" onclick="calcInput('2')">2</button>
+      <button class="cb" onclick="calcInput('3')">3</button>
+      <button class="cb op" onclick="calcInput('+')">+</button>
+
+      <button class="cb" style="grid-column:span 2" onclick="calcInput('0')">0</button>
+      <button class="cb" onclick="calcInput('.')">.</button>
+      <button class="cb eq" onclick="calcEqual()">=</button>
+    </div>
+
+    <!-- History -->
+    <div class="calc-history" id="calc-history-panel" style="display:none;">
+      <div class="history-label">HISTORY</div>
+      <div id="calc-history-list"></div>
+    </div>
+    <button onclick="toggleCalcHistory()" style="background:none;border:none;color:rgba(240,244,255,0.4);font-size:11px;cursor:pointer;margin-top:10px;font-family:'Noto Sans Sinhala',sans-serif;width:100%;text-align:center;">
+      📜 ඉතිහාසය බලන්න / සඟවන්න
+    </button>
+  </div>
+</div>
+
+<div class="notif" id="notif"></div>
+
+<script>
+// ========== STORAGE ==========
+const STORAGE_KEY = 'ibbagamuwa_records';
+
+function loadRecords() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  } catch { return []; }
+}
+
+function saveRecords(records) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+}
+
+// ========== TABS ==========
+function showTab(name) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+  if (name === 'view') renderRecords();
+  if (name === 'stats') renderStats();
+}
+
+// ========== RECORDS ==========
+function addRecord() {
+  const date = document.getElementById('rec-date').value;
+  const cls = document.getElementById('rec-class').value;
+  const subject = document.getElementById('rec-subject').value.trim();
+  const teacher = document.getElementById('rec-teacher').value.trim();
+  const desc = document.getElementById('rec-desc').value.trim();
+
+  if (!date || !cls || !subject || !teacher) {
+    showNotif('⚠️ දිනය, පන්තිය, විෂය සහ ගුරු නම අත්‍යවශ්‍යයි!');
+    return;
+  }
+
+  const records = loadRecords();
+  records.unshift({ id: Date.now(), date, cls, subject, teacher, desc });
+  saveRecords(records);
+
+  document.getElementById('rec-subject').value = '';
+  document.getElementById('rec-teacher').value = '';
+  document.getElementById('rec-desc').value = '';
+  showNotif('✅ වාර්තාව සාර්ථකව සුරකිනා ලදි!');
+}
+
+function renderRecords() {
+  const filterDate = document.getElementById('filter-date').value;
+  const filterClass = document.getElementById('filter-class').value;
+  let records = loadRecords();
+
+  if (filterDate) records = records.filter(r => r.date === filterDate);
+  if (filterClass) records = records.filter(r => r.cls === filterClass);
+
+  const tbody = document.getElementById('records-tbody');
+  if (records.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="icon">📭</div>තෝරාගත් කොන්දේසි සඳහා වාර්තා නොමැත</div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = records.map(r => `
+    <tr>
+      <td>${formatDate(r.date)}</td>
+      <td><span class="badge">${r.cls}</span></td>
+      <td>${escHtml(r.subject)}</td>
+      <td>${escHtml(r.teacher)}</td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escHtml(r.desc)}">${escHtml(r.desc) || '—'}</td>
+      <td><button class="btn-delete" onclick="deleteRecord(${r.id})">🗑</button></td>
+    </tr>
+  `).join('');
+}
+
+function deleteRecord(id) {
+  if (!confirm('මෙම වාර්තාව මකන්නද?')) return;
+  const records = loadRecords().filter(r => r.id !== id);
+  saveRecords(records);
+  renderRecords();
+  showNotif('🗑 වාර්තාව මකා දැමිණ.');
+}
+
+function renderStats() {
+  const records = loadRecords();
+  document.getElementById('stat-total').textContent = records.length;
+  const classes = [...new Set(records.map(r => r.cls))];
+  document.getElementById('stat-classes').textContent = classes.length;
+
+  const breakdown = {};
+  records.forEach(r => { breakdown[r.cls] = (breakdown[r.cls] || 0) + 1; });
+
+  const sorted = Object.entries(breakdown).sort((a, b) => b[1] - a[1]);
+  const max = sorted[0]?.[1] || 1;
+
+  document.getElementById('class-breakdown').innerHTML = sorted.length === 0 ? '' :
+    `<div style="font-size:12px;color:var(--accent);margin-bottom:10px;font-weight:700;">📊 පන්ති අනුව බෙදීම</div>` +
+    sorted.map(([cls, count]) => `
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <span style="width:36px;font-size:12px;font-weight:700;color:var(--accent);">${cls}</span>
+        <div style="flex:1;background:rgba(255,255,255,0.05);border-radius:6px;height:8px;overflow:hidden;">
+          <div style="width:${(count/max*100)}%;background:linear-gradient(90deg,var(--accent),#0288d1);height:100%;border-radius:6px;transition:width 0.5s;"></div>
+        </div>
+        <span style="font-size:12px;color:rgba(240,244,255,0.7);width:20px;text-align:right;">${count}</span>
+      </div>
+    `).join('');
+}
+
+function formatDate(d) {
+  if (!d) return '';
+  const [y, m, day] = d.split('-');
+  return `${day}/${m}/${y}`;
+}
+
+function escHtml(s = '') {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ========== NOTIFICATION ==========
+function showNotif(msg) {
+  const n = document.getElementById('notif');
+  n.textContent = msg;
+  n.classList.add('show');
+  setTimeout(() => n.classList.remove('show'), 2800);
+}
+
+// ========== CALCULATOR ==========
+let calcExpr = '';
+let calcPendingFn = null;
+let calcMode = 'basic';
+let calcHistoryArr = [];
+
+function toggleCalc() {
+  const ov = document.getElementById('calc-overlay');
+  ov.classList.toggle('open');
+}
+
+function closeCalcIfOutside(e) {
+  if (e.target === document.getElementById('calc-overlay')) toggleCalc();
+}
+
+function switchCalcMode(mode) {
+  calcMode = mode;
+  document.getElementById('basic-btns').style.display = mode === 'basic' ? 'grid' : 'none';
+  document.getElementById('sci-btns').style.display = mode === 'sci' ? 'grid' : 'none';
+  document.querySelectorAll('.calc-tab').forEach((t, i) => {
+    t.classList.toggle('active', (i === 0 && mode === 'basic') || (i === 1 && mode === 'sci'));
+  });
+}
+
+function calcInput(v) {
+  if (v === '(') {
+    // toggle paren
+    const opens = (calcExpr.match(/\(/g) || []).length;
+    const closes = (calcExpr.match(/\)/g) || []).length;
+    calcExpr += opens > closes ? ')' : '(';
+  } else {
+    calcExpr += v;
+  }
+  updateCalcDisplay();
+}
+
+function calcClear() {
+  calcExpr = '';
+  calcPendingFn = null;
+  document.getElementById('calc-result').textContent = '0';
+  document.getElementById('calc-expr').textContent = '';
+}
+
+function calcDel() {
+  calcExpr = calcExpr.slice(0, -1);
+  updateCalcDisplay();
+}
+
+function calcFn(fn) {
+  const val = parseFloat(document.getElementById('calc-result').textContent);
+  let result;
+  const expr = calcExpr || String(val);
+
+  if (fn === 'sqrt') {
+    const n = calcExpr ? evalExpr(calcExpr) : val;
+    result = Math.sqrt(n);
+    pushHistory(`√(${n})`, result);
+    calcExpr = '';
+    document.getElementById('calc-expr').textContent = `√(${n})`;
+    document.getElementById('calc-result').textContent = fmtNum(result);
+    return;
+  }
+  if (fn === 'sq') {
+    const n = calcExpr ? evalExpr(calcExpr) : val;
+    result = n * n;
+    pushHistory(`(${n})²`, result);
+    calcExpr = '';
+    document.getElementById('calc-expr').textContent = `(${n})²`;
+    document.getElementById('calc-result').textContent = fmtNum(result);
+    return;
+  }
+  if (fn === 'pow') {
+    calcExpr += '^';
+    updateCalcDisplay();
+    return;
+  }
+  if (fn === 'pi') {
+    calcExpr += Math.PI.toFixed(8);
+    updateCalcDisplay();
+    return;
+  }
+  if (fn === 'sin') {
+    const n = calcExpr ? evalExpr(calcExpr) : val;
+    result = Math.sin(n * Math.PI / 180);
+    pushHistory(`sin(${n}°)`, result);
+    calcExpr = '';
+    document.getElementById('calc-expr').textContent = `sin(${n}°)`;
+    document.getElementById('calc-result').textContent = fmtNum(result);
+    return;
+  }
+  if (fn === 'cos') {
+    const n = calcExpr ? evalExpr(calcExpr) : val;
+    result = Math.cos(n * Math.PI / 180);
+    pushHistory(`cos(${n}°)`, result);
+    calcExpr = '';
+    document.getElementById('calc-expr').textContent = `cos(${n}°)`;
+    document.getElementById('calc-result').textContent = fmtNum(result);
+    return;
+  }
+  if (fn === 'tan') {
+    const n = calcExpr ? evalExpr(calcExpr) : val;
+    result = Math.tan(n * Math.PI / 180);
+    pushHistory(`tan(${n}°)`, result);
+    calcExpr = '';
+    document.getElementById('calc-expr').textContent = `tan(${n}°)`;
+    document.getElementById('calc-result').textContent = fmtNum(result);
+    return;
+  }
+  if (fn === 'log') {
+    const n = calcExpr ? evalExpr(calcExpr) : val;
+    result = Math.log10(n);
+    pushHistory(`log(${n})`, result);
+    calcExpr = '';
+    document.getElementById('calc-expr').textContent = `log(${n})`;
+    document.getElementById('calc-result').textContent = fmtNum(result);
+    return;
+  }
+}
+
+function calcEqual() {
+  if (!calcExpr) return;
+  try {
+    const result = evalExpr(calcExpr);
+    pushHistory(calcExpr, result);
+    document.getElementById('calc-expr').textContent = calcExpr + ' =';
+    document.getElementById('calc-result').textContent = fmtNum(result);
+    calcExpr = String(fmtNum(result));
+  } catch (e) {
+    document.getElementById('calc-result').textContent = 'Error';
+    calcExpr = '';
+  }
+}
+
+function evalExpr(expr) {
+  // replace display symbols with JS operators
+  let e = expr
+    .replace(/÷/g, '/')
+    .replace(/×/g, '*')
+    .replace(/−/g, '-')
+    .replace(/\^/g, '**')
+    .replace(/%/g, '/100');
+  // eslint-disable-next-line no-new-func
+  return Function('"use strict"; return (' + e + ')')();
+}
+
+function fmtNum(n) {
+  if (isNaN(n) || !isFinite(n)) return 'Error';
+  if (Number.isInteger(n)) return String(n);
+  return parseFloat(n.toFixed(10)).toString();
+}
+
+function updateCalcDisplay() {
+  document.getElementById('calc-expr').textContent = calcExpr;
+  if (calcExpr) {
+    try {
+      const r = evalExpr(calcExpr);
+      document.getElementById('calc-result').textContent = fmtNum(r);
+    } catch {
+      document.getElementById('calc-result').textContent = '...';
+    }
+  } else {
+    document.getElementById('calc-result').textContent = '0';
+  }
+}
+
+function pushHistory(expr, result) {
+  calcHistoryArr.unshift({ expr, result: fmtNum(result) });
+  if (calcHistoryArr.length > 20) calcHistoryArr.pop();
+  renderCalcHistory();
+}
+
+function renderCalcHistory() {
+  const list = document.getElementById('calc-history-list');
+  list.innerHTML = calcHistoryArr.map(h =>
+    `<div class="history-item" onclick="useHistory('${h.result}')">
+      <span>${h.expr}</span>
+      <span class="hist-res">= ${h.result}</span>
+    </div>`
+  ).join('');
+}
+
+function useHistory(val) {
+  calcExpr = val;
+  updateCalcDisplay();
+}
+
+let histVisible = false;
+function toggleCalcHistory() {
+  histVisible = !histVisible;
+  document.getElementById('calc-history-panel').style.display = histVisible ? 'block' : 'none';
+}
+
+// Keyboard support
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('calc-overlay').classList.contains('open')) return;
+  const map = { '0':'0','1':'1','2':'2','3':'3','4':'4','5':'5','6':'6','7':'7','8':'8','9':'9',
+    '+':'+','*':'×','/':'÷','-':'−','.':'.','%':'%',
+    'Enter':'=','Backspace':'⌫','Escape':'C' };
+  if (e.key === 'Enter') { e.preventDefault(); calcEqual(); }
+  else if (e.key === 'Backspace') { e.preventDefault(); calcDel(); }
+  else if (e.key === 'Escape') calcClear();
+  else if ('0123456789'.includes(e.key)) calcInput(e.key);
+  else if (e.key === '+') calcInput('+');
+  else if (e.key === '-') calcInput('−');
+  else if (e.key === '*') calcInput('×');
+  else if (e.key === '/') { e.preventDefault(); calcInput('÷'); }
+  else if (e.key === '.') calcInput('.');
+});
+
+// Set today's date
+document.getElementById('rec-date').valueAsDate = new Date();
+</script>
+</body>
+</html>
