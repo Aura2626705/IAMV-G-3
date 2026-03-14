@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>School Record Book System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --blue-50:  #f0f7ff;
+      --blue-100: #dbeafe;
+      --blue-200: #bfdbfe;
+      --blue-400: #60a5fa;
+      --blue-500: #3b82f6;
+      --blue-600: #2563eb;
+      --blue-700: #1d4ed8;
+      --blue-900: #1e3a8a;
+      --white: #ffffff;
+      --gray-50: #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-400: #94a3b8;
+      --gray-500: #64748b;
+      --gray-600: #475569;
+      --gray-700: #334155;
+      --gray-800: #1e293b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--blue-50);
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* â”€â”€ Scrollbar â”€â”€ */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--blue-50); }
+    ::-webkit-scrollbar-thumb { background: var(--blue-200); border-radius: 99px; }
+
+    /* â”€â”€ Sidebar â”€â”€ */
+    #sidebar {
+      width: 240px;
+      min-height: 100vh;
+      background: linear-gradient(160deg, var(--blue-700) 0%, var(--blue-900) 100%);
+      position: fixed;
+      top: 0; left: 0;
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+      box-shadow: 4px 0 24px rgba(30,58,138,.18);
+    }
+
+    .sidebar-logo {
+      padding: 28px 24px 20px;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+    .sidebar-logo .school-icon {
+      width: 44px; height: 44px;
+      background: rgba(255,255,255,.15);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 10px;
+    }
+    .sidebar-logo h1 {
+      color: #fff;
+      font-size: 15px;
+      font-weight: 800;
+      line-height: 1.3;
+      letter-spacing: -.3px;
+    }
+    .sidebar-logo span {
+      color: var(--blue-200);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+    }
+
+    .nav-section {
+      padding: 16px 12px;
+      flex: 1;
+    }
+    .nav-label {
+      color: rgba(255,255,255,.4);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      padding: 0 12px;
+      margin-bottom: 8px;
+      margin-top: 8px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      color: rgba(255,255,255,.7);
+      font-size: 13.5px;
+      font-weight: 500;
+      transition: all .18s ease;
+      margin-bottom: 2px;
+      text-decoration: none;
+    }
+    .nav-item:hover { background: rgba(255,255,255,.1); color: #fff; }
+    .nav-item.active { background: rgba(255,255,255,.18); color: #fff; font-weight: 700; }
+    .nav-item .nav-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+    .nav-item.active .nav-icon { background: rgba(255,255,255,.15); }
+
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid rgba(255,255,255,.1);
+      color: rgba(255,255,255,.5);
+      font-size: 11px;
+      text-align: center;
+    }
+
+    /* â”€â”€ Main Content â”€â”€ */
+    #main {
+      margin-left: 240px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* â”€â”€ Top Bar â”€â”€ */
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid var(--blue-100);
+      padding: 0 32px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky; top: 0; z-index: 50;
+      box-shadow: 0 1px 8px rgba(37,99,235,.06);
+    }
+    .topbar-title { font-size: 18px; font-weight: 800; color: var(--blue-900); letter-spacing: -.4px; }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .topbar-date {
+      background: var(--blue-50);
+      border: 1px solid var(--blue-100);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 12px;
+      color: var(--blue-600);
+      font-weight: 600;
+      font-family: 'DM Mono', monospace;
+    }
+    .btn-calc {
+      background: linear-gradient(135deg, var(--blue-500), var(--blue-700));
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+      transition: all .18s ease;
+      box-shadow: 0 2px 8px rgba(37,99,235,.3);
+    }
+    .btn-calc:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(37,99,235,.4); }
+
+    /* â”€â”€ Page Sections â”€â”€ */
+    .page { display: none; padding: 32px; flex: 1; }
+    .page.active { display: block; }
+
+    /* â”€â”€ Card â”€â”€ */
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid var(--blue-100);
+      box-shadow: 0 2px 12px rgba(37,99,235,.06);
+      padding: 28px;
+    }
+    .card-header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 24px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--blue-50);
+    }
+    .card-icon {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--blue-100), var(--blue-200));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .card-title { font-size: 16px; font-weight: 800; color: var(--blue-900); }
+    .card-subtitle { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+
+    /* â”€â”€ Form â”€â”€ */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-label {
+      font-size: 12px; font-weight: 700; color: var(--gray-600);
+      letter-spacing: .3px; text-transform: uppercase;
+    }
+    .form-input, .form-select {
+      width: 100%;
+      background: var(--blue-50);
+      border: 1.5px solid var(--blue-100);
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-size: 14px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--gray-800);
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .form-input:focus, .form-select:focus {
+      border-color: var(--blue-400);
+      box-shadow: 0 0 0 3px rgba(96,165,250,.18);
+      background: #fff;
+    }
+    .class-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .btn-submit {
+      background: linear-gradient(135deg, var(--blue-500), var(--blue-700));
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 32px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .18s ease;
+      box-shadow: 0 4px 14px rgba(37,99,235,.35);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37,99,235,.45); }
+    .btn-submit:active { transform: translateY(0); }
+
+    .datetime-badge {
+      background: linear-gradient(135deg, var(--blue-50), var(--blue-100));
+      border: 1px solid var(--blue-200);
+      border-radius: 10px;
+      padding: 12px 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .datetime-badge span { font-size: 12px; color: var(--blue-600); font-weight: 600; }
+    #live-clock { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; color: var(--blue-700); }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      background: linear-gradient(135deg, var(--blue-600), var(--blue-700));
+      color: #fff;
+      border-radius: 12px;
+      padding: 14px 22px;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(37,99,235,.4);
+      z-index: 9999;
+      display: none;
+      align-items: center; gap: 10px;
+      animation: slideUp .3s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    /* â”€â”€ Table â”€â”€ */
+    .filter-row {
+      display: flex; gap: 14px; align-items: flex-end;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .filter-group { display: flex; flex-direction: column; gap: 5px; }
+    .filter-group label { font-size: 11px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; }
+    .filter-group input, .filter-group select {
+      background: var(--blue-50);
+      border: 1.5px solid var(--blue-100);
+      border-radius: 9px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--gray-700);
+      outline: none;
+      transition: border-color .15s;
+    }
+    .filter-group input:focus, .filter-group select:focus {
+      border-color: var(--blue-400);
+      box-shadow: 0 0 0 3px rgba(96,165,250,.15);
+    }
+    .btn-clear {
+      background: var(--blue-50);
+      border: 1.5px solid var(--blue-100);
+      border-radius: 9px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--blue-600);
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .btn-clear:hover { background: var(--blue-100); }
+    .btn-delete-all {
+      background: #fff0f0;
+      border: 1.5px solid #fecaca;
+      border-radius: 9px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #ef4444;
+      cursor: pointer;
+      transition: all .15s;
+      margin-left: auto;
+    }
+    .btn-delete-all:hover { background: #fee2e2; }
+
+    .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--blue-100); }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr {
+      background: linear-gradient(90deg, var(--blue-600), var(--blue-700));
+    }
+    thead th {
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      padding: 13px 16px;
+      text-align: left;
+      white-space: nowrap;
+    }
+    tbody tr {
+      border-bottom: 1px solid var(--blue-50);
+      transition: background .12s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--blue-50); }
+    tbody td {
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--gray-700);
+      vertical-align: middle;
+    }
+    .badge {
+      display: inline-block;
+      background: var(--blue-100);
+      color: var(--blue-700);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .btn-row-del {
+      background: none; border: none; cursor: pointer;
+      color: #f87171; font-size: 15px; padding: 4px 6px;
+      border-radius: 6px; transition: background .12s;
+    }
+    .btn-row-del:hover { background: #fee2e2; }
+
+    .empty-state {
+      text-align: center; padding: 48px 20px;
+      color: var(--gray-400); font-size: 14px;
+    }
+    .empty-state .empty-icon { font-size: 40px; margin-bottom: 10px; }
+    .records-count {
+      font-size: 12px; color: var(--gray-400);
+      margin-top: 12px;
+      font-family: 'DM Mono', monospace;
+    }
+
+    /* â”€â”€ Dashboard â”€â”€ */
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    .stat-card {
+      background: #fff;
+      border: 1px solid var(--blue-100);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex; align-items: center; gap: 14px;
+      box-shadow: 0 2px 8px rgba(37,99,235,.05);
+    }
+    .stat-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .stat-icon.blue { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
+    .stat-icon.indigo { background: linear-gradient(135deg, #e0e7ff, #c7d2fe); }
+    .stat-icon.sky { background: linear-gradient(135deg, #e0f2fe, #bae6fd); }
+    .stat-value { font-size: 28px; font-weight: 800; color: var(--blue-900); line-height: 1; }
+    .stat-label { font-size: 12px; color: var(--gray-400); font-weight: 500; margin-top: 3px; }
+
+    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .chart-card { background: #fff; border-radius: 14px; border: 1px solid var(--blue-100); padding: 22px; box-shadow: 0 2px 8px rgba(37,99,235,.05); }
+    .chart-title { font-size: 13px; font-weight: 800; color: var(--blue-900); margin-bottom: 16px; text-transform: uppercase; letter-spacing: .4px; }
+
+    /* Grade Bars */
+    .grade-bar-item { margin-bottom: 10px; }
+    .grade-bar-header { display: flex; justify-content: space-between; margin-bottom: 5px; }
+    .grade-bar-label { font-size: 12px; font-weight: 600; color: var(--gray-600); }
+    .grade-bar-val { font-size: 12px; font-weight: 700; color: var(--blue-600); font-family: 'DM Mono', monospace; }
+    .grade-bar-track {
+      height: 8px; background: var(--blue-50); border-radius: 99px; overflow: hidden;
+    }
+    .grade-bar-fill {
+      height: 100%; background: linear-gradient(90deg, var(--blue-400), var(--blue-600));
+      border-radius: 99px;
+      transition: width .6s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* Teacher stats */
+    .teacher-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--blue-50);
+      font-size: 13px;
+    }
+    .teacher-row:last-child { border-bottom: none; }
+    .teacher-name { color: var(--gray-700); font-weight: 600; }
+    .teacher-count {
+      background: var(--blue-100); color: var(--blue-700);
+      font-weight: 700; font-size: 11px; border-radius: 20px;
+      padding: 2px 10px; font-family: 'DM Mono', monospace;
+    }
+
+    /* â”€â”€ Calculator â”€â”€ */
+    #calc-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(15,30,80,.45);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      align-items: center; justify-content: center;
+    }
+    #calc-overlay.open { display: flex; }
+    #calculator {
+      background: #fff;
+      border-radius: 24px;
+      padding: 24px;
+      width: 320px;
+      box-shadow: 0 24px 80px rgba(30,58,138,.3);
+      animation: calcIn .25s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes calcIn { from { transform: scale(.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .calc-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .calc-title { font-size: 15px; font-weight: 800; color: var(--blue-900); }
+    .calc-close {
+      background: var(--blue-50); border: none; border-radius: 8px;
+      width: 28px; height: 28px; cursor: pointer; font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gray-500); transition: background .15s;
+    }
+    .calc-close:hover { background: var(--blue-100); }
+    .calc-display {
+      background: var(--blue-900);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 14px;
+      text-align: right;
+    }
+    .calc-expr { font-family: 'DM Mono', monospace; font-size: 12px; color: rgba(255,255,255,.4); min-height: 18px; word-break: break-all; }
+    .calc-result { font-family: 'DM Mono', monospace; font-size: 30px; font-weight: 500; color: #fff; word-break: break-all; }
+    .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .calc-btn {
+      border: none; border-radius: 12px;
+      padding: 0; height: 56px;
+      font-size: 16px; font-weight: 700;
+      cursor: pointer; transition: all .1s ease;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .calc-btn:active { transform: scale(.94); }
+    .calc-btn.num { background: var(--blue-50); color: var(--blue-900); }
+    .calc-btn.num:hover { background: var(--blue-100); }
+    .calc-btn.op { background: var(--blue-100); color: var(--blue-700); }
+    .calc-btn.op:hover { background: var(--blue-200); }
+    .calc-btn.eq {
+      background: linear-gradient(135deg, var(--blue-500), var(--blue-700));
+      color: #fff;
+      box-shadow: 0 3px 10px rgba(37,99,235,.35);
+    }
+    .calc-btn.eq:hover { box-shadow: 0 5px 16px rgba(37,99,235,.45); }
+    .calc-btn.clr { background: #fee2e2; color: #ef4444; }
+    .calc-btn.clr:hover { background: #fecaca; }
+    .calc-btn.span2 { grid-column: span 2; }
+
+    /* â”€â”€ Footer â”€â”€ */
+    footer {
+      background: var(--blue-900);
+      color: rgba(255,255,255,.5);
+      text-align: center;
+      padding: 14px 20px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: .3px;
+    }
+    footer strong { color: var(--blue-300); }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      #sidebar { width: 200px; }
+      #main { margin-left: 200px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .charts-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      #sidebar { transform: translateX(-100%); transition: transform .25s; }
+      #sidebar.open { transform: translateX(0); }
+      #main { margin-left: 0; }
+      .form-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .charts-grid { grid-template-columns: 1fr; }
+      .page { padding: 20px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SIDEBAR â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<aside id="sidebar">
+  <div class="sidebar-logo">
+    <div class="school-icon">
+      <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z" fill="#fff"/><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z" fill="rgba(255,255,255,.6)"/></svg>
+    </div>
+    <h1>School Record<br/>Book System</h1>
+    <span>Academic Manager</span>
+  </div>
+
+  <nav class="nav-section">
+    <div class="nav-label">Main Menu</div>
+
+    <div class="nav-item active" data-page="entry" onclick="navigate('entry',this)">
+      <div class="nav-icon"></div>
+      <span>New Entry</span>
+    </div>
+    <div class="nav-item" data-page="records" onclick="navigate('records',this)">
+      <div class="nav-icon">ðŸ“‹</div>
+      <span>View Records</span>
+    </div>
+    <div class="nav-item" data-page="dashboard" onclick="navigate('dashboard',this)">
+      <div class="nav-icon">ðŸ“Š</div>
+      <span>Dashboard</span>
+    </div>
+
+    <div class="nav-label" style="margin-top:16px;">Tools</div>
+    <div class="nav-item" onclick="openCalc()">
+      <div class="nav-icon"></div>
+      <span>Calculator</span>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    Powered by <strong style="color:rgba(255,255,255,.7)">aura iot</strong>
+  </div>
+</aside>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MAIN â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<div id="main">
+
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="topbar-title" id="page-title">New Entry</div>
+    <div class="topbar-right">
+      <div class="topbar-date" id="topbar-clock">Loadingâ€¦</div>
+      <button class="btn-calc" onclick="openCalc()">Calculator</button>
+    </div>
+  </header>
+
+  <!-- â•â•â• PAGE: ENTRY FORM â•â•â• -->
+  <section id="page-entry" class="page active">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon"></div>
+        <div>
+          <div class="card-title">Add New Lesson Record</div>
+          <div class="card-subtitle">Fill in the details below ” date &amp; time are captured automatically</div>
+        </div>
+      </div>
+
+      <!-- Live clock badge -->
+      <div class="datetime-badge" style="margin-bottom:24px;">
+        <span>…</span>
+        <div>
+          <span style="font-size:11px;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;font-weight:700;">Timestamp will be captured on submit</span><br/>
+          <span id="live-clock"></span>
+        </div>
+      </div>
+
+      <form id="entry-form" onsubmit="submitRecord(event)" autocomplete="off">
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label class="form-label">Subject</label>
+            <input id="f-subject" class="form-input" type="text" placeholder="e.g. Mathematics" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Topic Taught</label>
+            <input id="f-topic" class="form-input" type="text" placeholder="e.g. Quadratic Equations" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Teacher Name</label>
+            <input id="f-teacher" class="form-input" type="text" placeholder="e.g. Mr. Perera" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Class (Grade &amp; Section)</label>
+            <div class="class-row">
+              <select id="f-grade" class="form-select" required>
+                <option value="" disabled selected>Grade</option>
+                <option>6</option><option>7</option><option>8</option>
+                <option>9</option><option>10</option><option>11</option>
+                <option>12</option><option>13</option>
+              </select>
+              <select id="f-section" class="form-select" required>
+                <option value="" disabled selected>Section</option>
+                <option>A</option><option>B</option><option>C</option>
+                <option>D</option><option>E</option><option>F</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+
+        <div style="margin-top:24px;display:flex;gap:12px;align-items:center;">
+          <button type="submit" class="btn-submit">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Save Record
+          </button>
+          <button type="reset" style="background:var(--blue-50);border:1.5px solid var(--blue-100);border-radius:12px;padding:14px 24px;font-size:14px;font-weight:600;color:var(--gray-500);cursor:pointer;">
+            Reset
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- â•â•â• PAGE: VIEW RECORDS â•â•â• -->
+  <section id="page-records" class="page">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">‹</div>
+        <div>
+          <div class="card-title">Lesson Records</div>
+          <div class="card-subtitle">Browse, filter, and manage all saved records</div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filter-row">
+        <div class="filter-group">
+          <label>Filter by Date</label>
+          <input type="date" id="filter-date" onchange="renderTable()" />
+        </div>
+        <div class="filter-group">
+          <label>Filter by Grade</label>
+          <select id="filter-grade" onchange="renderTable()">
+            <option value="">All Grades</option>
+            <option>6</option><option>7</option><option>8</option>
+            <option>9</option><option>10</option><option>11</option>
+            <option>12</option><option>13</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Filter by Section</label>
+          <select id="filter-section" onchange="renderTable()">
+            <option value="">All Sections</option>
+            <option>A</option><option>B</option><option>C</option>
+            <option>D</option><option>E</option><option>F</option>
+          </select>
+        </div>
+        <div class="filter-group" style="justify-content:flex-end;">
+          <label>&nbsp;</label>
+          <button class="btn-clear" onclick="clearFilters()">Clear Filters</button>
+        </div>
+        <button class="btn-delete-all" onclick="deleteAll()">‘ Delete All</button>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <table id="records-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Subject</th>
+              <th>Topic Taught</th>
+              <th>Teacher</th>
+              <th>Class</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="records-tbody"></tbody>
+        </table>
+      </div>
+      <div class="records-count" id="records-count"></div>
+    </div>
+  </section>
+
+  <!-- â•â•â• PAGE: DASHBOARD â•â•â• -->
+  <section id="page-dashboard" class="page">
+
+    <!-- Stat Cards -->
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon blue"></div>
+        <div>
+          <div class="stat-value" id="stat-total">0</div>
+          <div class="stat-label">Total Records</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon indigo">ðŸ‘©â€ðŸ«</div>
+        <div>
+          <div class="stat-value" id="stat-teachers">0</div>
+          <div class="stat-label">Unique Teachers</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon sky">«</div>
+        <div>
+          <div class="stat-value" id="stat-subjects">0</div>
+          <div class="stat-label">Subjects Covered</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+
+      <!-- Grade bar chart -->
+      <div class="chart-card">
+        <div class="chart-title"> Entries per Grade</div>
+        <div id="grade-bars"></div>
+      </div>
+
+      <!-- Subject pie via Chart.js -->
+      <div class="chart-card">
+        <div class="chart-title"> Records by Subject</div>
+        <canvas id="subject-chart" height="220"></canvas>
+      </div>
+
+      <!-- Teacher activity -->
+      <div class="chart-card">
+        <div class="chart-title">Teacher Activity</div>
+        <div id="teacher-list"></div>
+      </div>
+
+      <!-- Section bar chart -->
+      <div class="chart-card">
+        <div class="chart-title">ˆ Entries per Section</div>
+        <canvas id="section-chart" height="220"></canvas>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    Powered by <strong>aura iot</strong> &nbsp;|&nbsp; School Record Book System &copy; <span id="yr"></span>
+  </footer>
+</div>
+
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• CALCULATOR â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<div id="calc-overlay" onclick="closeCalcOverlay(event)">
+  <div id="calculator">
+    <div class="calc-header">
+      <span class="calc-title">Teacher's Calculator</span>
+      <button class="calc-close" onclick="closeCalc()"></button>
+    </div>
+    <div class="calc-display">
+      <div class="calc-expr" id="calc-expr"></div>
+      <div class="calc-result" id="calc-result">0</div>
+    </div>
+    <div class="calc-grid">
+      <button class="calc-btn clr" onclick="calcClear()">AC</button>
+      <button class="calc-btn op" onclick="calcInput('Â±')">Â±</button>
+      <button class="calc-btn op" onclick="calcInput('%')">%</button>
+      <button class="calc-btn op" onclick="calcInput('Ã·')">÷ </button>
+
+      <button class="calc-btn num" onclick="calcInput('7')">7</button>
+      <button class="calc-btn num" onclick="calcInput('8')">8</button>
+      <button class="calc-btn num" onclick="calcInput('9')">9</button>
+      <button class="calc-btn op" onclick="calcInput('Ã—')">- </button>
+
+      <button class="calc-btn num" onclick="calcInput('4')">4</button>
+      <button class="calc-btn num" onclick="calcInput('5')">5</button>
+      <button class="calc-btn num" onclick="calcInput('6')">6</button>
+      <button class="calc-btn op" onclick="calcInput('âˆ’')">- </button>
+
+      <button class="calc-btn num" onclick="calcInput('1')">1</button>
+      <button class="calc-btn num" onclick="calcInput('2')">2</button>
+      <button class="calc-btn num" onclick="calcInput('3')">3</button>
+      <button class="calc-btn op" onclick="calcInput('+')">+</button>
+
+      <button class="calc-btn num span2" onclick="calcInput('0')">0</button>
+      <button class="calc-btn num" onclick="calcInput('.')">.</button>
+      <button class="calc-btn eq" onclick="calcEquals()">=</button>
+    </div>
+
+    <!-- Quick tools for teachers -->
+    <div style="margin-top:16px;border-top:1px solid var(--blue-100);padding-top:14px;">
+      <div style="font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;">Quick Tools</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button onclick="openAvgTool()" style="background:var(--blue-50);border:1.5px solid var(--blue-100);border-radius:8px;padding:7px 12px;font-size:12px;font-weight:600;color:var(--blue-600);cursor:pointer;">Avg Marks</button>
+        <button onclick="openPercentTool()" style="background:var(--blue-50);border:1.5px solid var(--blue-100);border-radius:8px;padding:7px 12px;font-size:12px;font-weight:600;color:var(--blue-600);cursor:pointer;">% Score</button>
+        <button onclick="calcClear()" style="background:var(--blue-50);border:1.5px solid var(--blue-100);border-radius:8px;padding:7px 12px;font-size:12px;font-weight:600;color:var(--gray-400);cursor:pointer;">Clear</button>
+      </div>
+      <div id="quick-tool-area" style="margin-top:12px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  GLOBAL STATE
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const STORAGE_KEY = 'srbs_records';
+let records = [];
+let subjectChart = null;
+let sectionChart = null;
+
+function loadData() {
+  try { records = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch { records = []; }
+}
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+}
+loadData();
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  CLOCK
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+function updateClock() {
+  const now = new Date();
+  const opts = { weekday:'short', year:'numeric', month:'short', day:'numeric' };
+  const dateStr = now.toLocaleDateString('en-GB', opts);
+  const timeStr = now.toLocaleTimeString('en-GB');
+  const full = `${dateStr}  ${timeStr}`;
+  const el = document.getElementById('live-clock');
+  const tb = document.getElementById('topbar-clock');
+  if (el) el.textContent = full;
+  if (tb) tb.textContent = `${dateStr} Â· ${timeStr}`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  NAVIGATION
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+const PAGE_TITLES = { entry:'New Entry', records:'View Records', dashboard:'Dashboard' };
+
+function navigate(page, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  if (el) el.classList.add('active');
+  document.getElementById('page-title').textContent = PAGE_TITLES[page] || page;
+  if (page === 'records') renderTable();
+  if (page === 'dashboard') renderDashboard();
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  ENTRY FORM
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+function submitRecord(e) {
+  e.preventDefault();
+  const now = new Date();
+  const record = {
+    id: Date.now(),
+    date: now.toLocaleDateString('en-GB'),
+    time: now.toLocaleTimeString('en-GB'),
+    isoDate: now.toISOString().slice(0, 10),
+    subject: document.getElementById('f-subject').value.trim(),
+    topic:   document.getElementById('f-topic').value.trim(),
+    teacher: document.getElementById('f-teacher').value.trim(),
+    grade:   document.getElementById('f-grade').value,
+    section: document.getElementById('f-section').value,
+  };
+  records.unshift(record);
+  saveData();
+  showToast('âœ… Record saved successfully!');
+  document.getElementById('entry-form').reset();
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  TABLE / RECORDS
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+function getFiltered() {
+  const fDate    = document.getElementById('filter-date')?.value || '';
+  const fGrade   = document.getElementById('filter-grade')?.value || '';
+  const fSection = document.getElementById('filter-section')?.value || '';
+  return records.filter(r => {
+    if (fDate    && r.isoDate  !== fDate)    return false;
+    if (fGrade   && r.grade    !== fGrade)   return false;
+    if (fSection && r.section  !== fSection) return false;
+    return true;
+  });
+}
+
+function renderTable() {
+  const tbody = document.getElementById('records-tbody');
+  const filtered = getFiltered();
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="8">
+      <div class="empty-state">
+        <div class="empty-icon">ðŸ“­</div>
+        <div>No records found.</div>
+        <div style="font-size:12px;margin-top:4px;color:var(--gray-300)">Try adjusting the filters or add a new record.</div>
+      </div>
+    </td></tr>`;
+    document.getElementById('records-count').textContent = '';
+    return;
+  }
+  tbody.innerHTML = filtered.map((r, i) => `
+    <tr>
+      <td><span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--gray-400)">${i+1}</span></td>
+      <td><span style="font-weight:600;color:var(--blue-700)">${r.date}</span></td>
+      <td><span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--gray-500)">${r.time}</span></td>
+      <td><strong style="color:var(--gray-800)">${esc(r.subject)}</strong></td>
+      <td style="color:var(--gray-600)">${esc(r.topic)}</td>
+      <td>${esc(r.teacher)}</td>
+      <td><span class="badge">Grade ${r.grade} â€“ ${r.section}</span></td>
+      <td><button class="btn-row-del" onclick="deleteRecord(${r.id})" title="Delete">ðŸ—‘</button></td>
+    </tr>
+  `).join('');
+  document.getElementById('records-count').textContent = `Showing ${filtered.length} of ${records.length} record(s)`;
+}
+
+function deleteRecord(id) {
+  if (!confirm('Delete this record?')) return;
+  records = records.filter(r => r.id !== id);
+  saveData();
+  renderTable();
+  showToast('ðŸ—‘ Record deleted.');
+}
+
+function deleteAll() {
+  if (!records.length) return showToast('â„¹ï¸ No records to delete.');
+  if (!confirm(`Delete ALL ${records.length} records? This cannot be undone.`)) return;
+  records = [];
+  saveData();
+  renderTable();
+  showToast('ðŸ—‘ All records deleted.');
+}
+
+function clearFilters() {
+  document.getElementById('filter-date').value = '';
+  document.getElementById('filter-grade').value = '';
+  document.getElementById('filter-section').value = '';
+  renderTable();
+}
+
+function esc(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  DASHBOARD
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+function renderDashboard() {
+  const total = records.length;
+  const uniqueTeachers = new Set(records.map(r => r.teacher.toLowerCase())).size;
+  const uniqueSubjects = new Set(records.map(r => r.subject.toLowerCase())).size;
+
+  document.getElementById('stat-total').textContent    = total;
+  document.getElementById('stat-teachers').textContent = uniqueTeachers;
+  document.getElementById('stat-subjects').textContent = uniqueSubjects;
+
+  // Grade bars
+  const grades = ['6','7','8','9','10','11','12','13'];
+  const gradeCounts = {};
+  grades.forEach(g => gradeCounts[g] = 0);
+  records.forEach(r => { if (gradeCounts[r.grade] !== undefined) gradeCounts[r.grade]++; });
+  const maxGrade = Math.max(1, ...Object.values(gradeCounts));
+  document.getElementById('grade-bars').innerHTML = grades.map(g => `
+    <div class="grade-bar-item">
+      <div class="grade-bar-header">
+        <span class="grade-bar-label">Grade ${g}</span>
+        <span class="grade-bar-val">${gradeCounts[g]}</span>
+      </div>
+      <div class="grade-bar-track">
+        <div class="grade-bar-fill" style="width:${(gradeCounts[g]/maxGrade)*100}%"></div>
+      </div>
+    </div>
+  `).join('');
+
+  // Subject pie chart
+  const subjectCounts = {};
+  records.forEach(r => {
+    const s = r.subject || 'Unknown';
+    subjectCounts[s] = (subjectCounts[s] || 0) + 1;
+  });
+  const subLabels = Object.keys(subjectCounts);
+  const subData   = Object.values(subjectCounts);
+  const BLUES = ['#1d4ed8','#2563eb','#3b82f6','#60a5fa','#93c5fd','#bfdbfe','#dbeafe','#1e40af','#1e3a8a'];
+
+  const sCtx = document.getElementById('subject-chart').getContext('2d');
+  if (subjectChart) subjectChart.destroy();
+  subjectChart = new Chart(sCtx, {
+    type: 'doughnut',
+    data: {
+      labels: subLabels.length ? subLabels : ['No Data'],
+      datasets: [{ data: subData.length ? subData : [1], backgroundColor: BLUES.slice(0, subLabels.length || 1), borderWidth: 0, hoverOffset: 6 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { font: { family: 'Plus Jakarta Sans', size: 11 }, padding: 12, boxWidth: 12 } } }
+    }
+  });
+
+  // Teacher activity
+  const teacherCounts = {};
+  records.forEach(r => { teacherCounts[r.teacher] = (teacherCounts[r.teacher]||0) + 1; });
+  const sortedTeachers = Object.entries(teacherCounts).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  document.getElementById('teacher-list').innerHTML = sortedTeachers.length
+    ? sortedTeachers.map(([t,c]) => `
+        <div class="teacher-row">
+          <span class="teacher-name">${esc(t)}</span>
+          <span class="teacher-count">${c}</span>
+        </div>`).join('')
+    : '<div style="color:var(--gray-300);font-size:13px;text-align:center;padding:20px">No data yet</div>';
+
+  // Section bar chart
+  const sections = ['A','B','C','D','E','F'];
+  const secCounts = {};
+  sections.forEach(s => secCounts[s] = 0);
+  records.forEach(r => { if (secCounts[r.section] !== undefined) secCounts[r.section]++; });
+
+  const secCtx = document.getElementById('section-chart').getContext('2d');
+  if (sectionChart) sectionChart.destroy();
+  sectionChart = new Chart(secCtx, {
+    type: 'bar',
+    data: {
+      labels: sections,
+      datasets: [{
+        label: 'Records',
+        data: sections.map(s => secCounts[s]),
+        backgroundColor: 'rgba(59,130,246,.75)',
+        borderRadius: 8,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { family: 'Plus Jakarta Sans' } } },
+        y: { grid: { color: '#f1f5f9' }, beginAtZero: true, ticks: { precision: 0, font: { family: 'Plus Jakarta Sans' } } }
+      }
+    }
+  });
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  CALCULATOR
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+let calcExpression = '';
+let calcAnswer = '0';
+let calcNewNumber = true;
+
+function openCalc() {
+  document.getElementById('calc-overlay').classList.add('open');
+}
+function closeCalc() {
+  document.getElementById('calc-overlay').classList.remove('open');
+}
+function closeCalcOverlay(e) {
+  if (e.target === document.getElementById('calc-overlay')) closeCalc();
+}
+function updateCalcDisplay() {
+  document.getElementById('calc-expr').textContent   = calcExpression;
+  document.getElementById('calc-result').textContent = calcAnswer;
+}
+function calcClear() {
+  calcExpression = ''; calcAnswer = '0'; calcNewNumber = true;
+  document.getElementById('quick-tool-area').innerHTML = '';
+  updateCalcDisplay();
+}
+function calcInput(val) {
+  document.getElementById('quick-tool-area').innerHTML = '';
+  if (val === 'Â±') {
+    if (calcAnswer !== '0') {
+      calcAnswer = String(-parseFloat(calcAnswer));
+      updateCalcDisplay();
+    }
+    return;
+  }
+  if (val === '%') {
+    if (calcAnswer !== '0') {
+      calcAnswer = String(parseFloat(calcAnswer) / 100);
+      updateCalcDisplay();
+    }
+    return;
+  }
+  const ops = ['+','âˆ’','Ã—','Ã·'];
+  if (ops.includes(val)) {
+    calcExpression = calcAnswer + ' ' + val + ' ';
+    calcNewNumber = true;
+    updateCalcDisplay();
+    return;
+  }
+  if (val === '.') {
+    if (calcNewNumber) { calcAnswer = '0.'; calcNewNumber = false; }
+    else if (!calcAnswer.includes('.')) calcAnswer += '.';
+    updateCalcDisplay();
+    return;
+  }
+  // digit
+  if (calcNewNumber) { calcAnswer = val; calcNewNumber = false; }
+  else calcAnswer = calcAnswer === '0' ? val : calcAnswer + val;
+  updateCalcDisplay();
+}
+function calcEquals() {
+  if (!calcExpression) return;
+  try {
+    const parts = calcExpression.trim().split(' ');
+    const a = parseFloat(parts[0]);
+    const op = parts[1];
+    const b = parseFloat(calcAnswer);
+    let result;
+    if (op === '+')  result = a + b;
+    if (op === 'âˆ’')  result = a - b;
+    if (op === 'Ã—')  result = a * b;
+    if (op === 'Ã·')  result = b === 0 ? 'Error' : a / b;
+    const full = calcExpression + calcAnswer;
+    calcAnswer = result === 'Error' ? 'Error' : String(parseFloat(result.toFixed(10)));
+    calcExpression = full + ' =';
+    calcNewNumber = true;
+    updateCalcDisplay();
+  } catch { calcAnswer = 'Error'; updateCalcDisplay(); }
+}
+
+// Keyboard support for calculator
+document.addEventListener('keydown', function(e) {
+  if (!document.getElementById('calc-overlay').classList.contains('open')) return;
+  const map = {'0':'0','1':'1','2':'2','3':'3','4':'4','5':'5','6':'6','7':'7','8':'8','9':'9','.':'.','+':`+`,'-':'âˆ’','*':'Ã—','/':'Ã·','%':'%'};
+  if (map[e.key]) { calcInput(map[e.key]); return; }
+  if (e.key === 'Enter' || e.key === '=') calcEquals();
+  if (e.key === 'Backspace') {
+    if (calcAnswer.length > 1) calcAnswer = calcAnswer.slice(0,-1);
+    else calcAnswer = '0';
+    updateCalcDisplay();
+  }
+  if (e.key === 'Escape') closeCalc();
+});
+
+// â”€â”€ Quick Teacher Tools â”€â”€
+function openAvgTool() {
+  document.getElementById('quick-tool-area').innerHTML = `
+    <div style="background:var(--blue-50);border-radius:10px;padding:12px;">
+      <div style="font-size:11px;font-weight:700;color:var(--gray-500);margin-bottom:8px;">AVERAGE MARKS CALCULATOR</div>
+      <textarea id="avg-input" placeholder="Enter marks separated by commas&#10;e.g. 75, 82, 90, 68" style="width:100%;background:#fff;border:1.5px solid var(--blue-100);border-radius:8px;padding:8px;font-size:12px;font-family:'DM Mono',monospace;resize:vertical;min-height:60px;outline:none;color:var(--gray-700);"></textarea>
+      <button onclick="calcAvg()" style="margin-top:8px;background:var(--blue-600);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;width:100%">Calculate Average</button>
+      <div id="avg-result" style="margin-top:8px;font-family:'DM Mono',monospace;font-size:13px;color:var(--blue-700);font-weight:700;text-align:center;"></div>
+    </div>`;
+}
+function calcAvg() {
+  const vals = document.getElementById('avg-input').value.split(',').map(v => parseFloat(v.trim())).filter(v => !isNaN(v));
+  if (!vals.length) { document.getElementById('avg-result').textContent = 'No valid numbers'; return; }
+  const avg = vals.reduce((a,b)=>a+b,0) / vals.length;
+  document.getElementById('avg-result').textContent = `Average: ${avg.toFixed(2)}  (${vals.length} marks)`;
+  calcAnswer = avg.toFixed(2); calcExpression = ''; calcNewNumber = true; updateCalcDisplay();
+}
+
+function openPercentTool() {
+  document.getElementById('quick-tool-area').innerHTML = `
+    <div style="background:var(--blue-50);border-radius:10px;padding:12px;">
+      <div style="font-size:11px;font-weight:700;color:var(--gray-500);margin-bottom:8px;">% SCORE CALCULATOR</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div>
+          <label style="font-size:10px;font-weight:700;color:var(--gray-400);">MARKS OBTAINED</label>
+          <input id="pct-got" type="number" placeholder="e.g. 75" style="width:100%;margin-top:4px;background:#fff;border:1.5px solid var(--blue-100);border-radius:8px;padding:7px;font-size:13px;font-family:'DM Mono',monospace;outline:none;color:var(--gray-700);" />
+        </div>
+        <div>
+          <label style="font-size:10px;font-weight:700;color:var(--gray-400);">TOTAL MARKS</label>
+          <input id="pct-total" type="number" placeholder="e.g. 100" style="width:100%;margin-top:4px;background:#fff;border:1.5px solid var(--blue-100);border-radius:8px;padding:7px;font-size:13px;font-family:'DM Mono',monospace;outline:none;color:var(--gray-700);" />
+        </div>
+      </div>
+      <button onclick="calcPct()" style="margin-top:8px;background:var(--blue-600);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;width:100%">Calculate %</button>
+      <div id="pct-result" style="margin-top:8px;font-family:'DM Mono',monospace;font-size:13px;color:var(--blue-700);font-weight:700;text-align:center;"></div>
+    </div>`;
+}
+function calcPct() {
+  const got = parseFloat(document.getElementById('pct-got').value);
+  const tot = parseFloat(document.getElementById('pct-total').value);
+  if (isNaN(got)||isNaN(tot)||tot===0) { document.getElementById('pct-result').textContent = 'Invalid input'; return; }
+  const pct = (got/tot)*100;
+  document.getElementById('pct-result').textContent = `${pct.toFixed(2)}%`;
+  calcAnswer = pct.toFixed(2); calcExpression = ''; calcNewNumber = true; updateCalcDisplay();
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  TOAST
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.innerHTML = msg;
+  t.style.display = 'flex';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.style.display = 'none'; }, 2800);
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+//  INIT
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+renderTable();
+</script>
+</body>
+</html>
